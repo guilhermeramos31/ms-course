@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "tb_worker")
 public class Worker implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -23,5 +24,7 @@ public class Worker implements Serializable {
     @Column(name = "id_worker")
     private Long id;
     private String name;
+    @Column(name = "daily_Income")
     private Double dailyIncome;
+
 }

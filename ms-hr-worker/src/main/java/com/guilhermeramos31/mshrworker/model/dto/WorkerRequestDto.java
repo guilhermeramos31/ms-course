@@ -1,16 +1,19 @@
 package com.guilhermeramos31.mshrworker.model.dto;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link com.guilhermeramos31.mshrworker.model.entity.Worker}
  */
-@Value
+
+@Getter
+@Setter
 @NonNull
-public class WorkerRequestDto implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class WorkerRequestDto {
     String name;
     Double dailyIncome;
 }
