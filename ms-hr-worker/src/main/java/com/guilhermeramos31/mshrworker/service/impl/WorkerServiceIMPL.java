@@ -1,13 +1,14 @@
 package com.guilhermeramos31.mshrworker.service.impl;
 
+import com.guilhermeramos31.mshrworker.model.dto.WorkerRequestDto;
+import com.guilhermeramos31.mshrworker.model.dto.WorkerRequestUpdateDTO;
 import com.guilhermeramos31.mshrworker.model.dto.WorkerResponseDto;
 import com.guilhermeramos31.mshrworker.repository.WorkerRepository;
 import com.guilhermeramos31.mshrworker.service.WorkerService;
 import com.guilhermeramos31.mshrworker.service.assembler.WorkerConverter;
+import com.guilhermeramos31.mshrworker.service.assembler.WorkerVerify;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.NotFound;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +20,68 @@ public class WorkerServiceIMPL implements WorkerService {
     private final WorkerConverter mapper;
 
     @Override
-    public ResponseEntity<List<WorkerResponseDto>> findAll() {
+    public List<WorkerResponseDto> getAll() {
         var workerListFound = repository.findAll();
         if (workerListFound.isEmpty()) throw new EntityNotFoundException("No workers found!");
-        return ResponseEntity.ok(mapper.listWorkToListWorkerResponseDto(workerListFound));
+        return mapper.listWorkToListWorkerResponseDto(workerListFound);
     }
 
+    @Override
+    public WorkerResponseDto getById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Field id not be null!");
+        }
+        try {
+            var workerFound = repository.findById(id).orElseThrow();
+
+            return mapper.workerToWorkerResponseDto(workerFound);
+        } catch (EntityNotFoundException exception) {
+            throw new EntityNotFoundException("Entity not found!");
+        }
+    }
+
+    @Override
+    public WorkerResponseDto create(WorkerRequestDto requestDto) {
+        if (requestDto == null) {
+            throw new IllegalArgumentException("requestDto not be null!");
+        }
+
+        try {
+            WorkerVerify.verify(requestDto);
+            var requestSaved = repository.save(mapper.work(requestDto));
+
+            return mapper.workerToWorkerResponseDto(requestSaved);
+        } catch (IllegalAccessException exception){
+            return null;
+        }
+    }
+
+    @Override
+    public WorkerResponseDto update(WorkerRequestUpdateDTO requestUpdateDTO, Long id) throws IllegalAccessException {
+        WorkerVerify.verify(requestUpdateDTO);
+        var workerFound = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        workerFound.setId(workerFound.getId());
+        workerFound.setName(requestUpdateDTO.getName());
+        workerFound.setDailyIncome(requestUpdateDTO.getDailyIncome());
+
+        var workerSaved = repository.save(workerFound);
+
+        return mapper.workerToWorkerResponseDto(workerSaved);
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id field not be null");
+        }
+
+        try {
+            repository.findById(id).orElseThrow(EntityNotFoundException::new);
+            repository.deleteById(id);
+
+        } catch (EntityNotFoundException exception){
+            throw new EntityNotFoundException("Entity not found!");
+        }
+    }
 }

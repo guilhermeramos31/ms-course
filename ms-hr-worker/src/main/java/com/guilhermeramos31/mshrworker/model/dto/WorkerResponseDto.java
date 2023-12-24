@@ -1,9 +1,7 @@
 package com.guilhermeramos31.mshrworker.model.dto;
 
 import lombok.*;
-import lombok.NonNull;
 
-import java.io.Serializable;
 
 /**
  * DTO for {@link com.guilhermeramos31.mshrworker.model.entity.Worker}

@@ -1,11 +1,17 @@
 package com.guilhermeramos31.mshrworker.service;
 
+import com.guilhermeramos31.mshrworker.model.dto.WorkerRequestDto;
+import com.guilhermeramos31.mshrworker.model.dto.WorkerRequestUpdateDTO;
 import com.guilhermeramos31.mshrworker.model.dto.WorkerResponseDto;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface WorkerService {
-    public ResponseEntity<List<WorkerResponseDto>> findAll();
+    List<WorkerResponseDto> getAll();
 
+    WorkerResponseDto getById(Long id);
+    WorkerResponseDto create(WorkerRequestDto requestDto) throws IllegalAccessException;
+    WorkerResponseDto update(WorkerRequestUpdateDTO requestUpdateDTO, Long id) throws IllegalAccessException;
+
+    void delete(Long id);
 }
